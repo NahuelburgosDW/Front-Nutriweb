@@ -24,4 +24,5 @@ export interface Recipe {
   imageUrl: string;
   foodType: string;
   calories: number;
+  isRecommend?: boolean;
 }

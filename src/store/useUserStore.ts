@@ -14,7 +14,6 @@ interface UserStore {
   deleteProduct: (productId: string) => Promise<void>;
   fetchUser: () => Promise<void>;
 }
-const USER_ID = 1;
 
 export const useUserStore = create<UserStore>((set, get) => ({
   user: null,
@@ -26,14 +25,19 @@ export const useUserStore = create<UserStore>((set, get) => ({
     try {
       const authStore = useAuthStore.getState();
       const res = await axiosInstance.patch(`/users/${id}`, data);
-      authStore.updateUser(res?.data?.data as any); 
+      authStore.updateUser(res?.data?.data as any);
     } catch (error) {
       console.error("Error updating user:", error);
     }
   },
   addProduct: async (product: Product) => {
     try {
-      const url = `/users/${USER_ID}/products/${product?.id}`;
+      const userState = useAuthStore.getState().user;
+      if (!userState || !userState.id) {
+        throw new Error("User ID is not available.");
+      }
+
+      const url = `/users/${userState?.id}/products/${product?.id}`;
 
       await axiosInstance.post(url);
       set((state) => ({ userProducts: [...state.userProducts, product] }));
@@ -44,7 +48,11 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
   deleteProduct: async (productId) => {
     try {
-      await axiosInstance.delete(`/users/${USER_ID}/products/${productId}`);
+      const userState = useAuthStore.getState().user;
+      if (!userState || !userState.id) {
+        throw new Error("User ID is not available.");
+      }
+      await axiosInstance.delete(`/users/${userState.id}/products/${productId}`);
       set((state) => ({
         userProducts: state.userProducts.filter((product) => product.id !== productId),
       }));

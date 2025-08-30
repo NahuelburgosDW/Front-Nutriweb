@@ -7,7 +7,14 @@ import { Navigate, Outlet } from "react-router-dom";
 const PrivateRoute: React.FC = () => {
   const { isLoggedIn } = useAuthStore();
   const { products, fetchProducts, isLoading: isProductsLoading } = useProductStore();
-  const { recipes, fetchRecipes, fetchCategories, categories, isLoading: isRecipesLoading } = useRecipeStore();
+  const {
+    recipes,
+    fetchRecipes,
+    fetchCategories,
+    fetchRecommendRecipes,
+    categories,
+    isLoading: isRecipesLoading,
+  } = useRecipeStore();
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -15,7 +22,8 @@ const PrivateRoute: React.FC = () => {
         fetchProducts();
       }
       if (recipes.length === 0 && !isRecipesLoading) {
-        fetchRecipes();
+        /*      fetchRecipes(); */
+        fetchRecommendRecipes();
       }
       if (categories.length === 0 && !isRecipesLoading) {
         fetchCategories();
@@ -29,7 +37,7 @@ const PrivateRoute: React.FC = () => {
 
   return (
     <>
-      <Outlet />;
+      <Outlet />
     </>
   );
 };

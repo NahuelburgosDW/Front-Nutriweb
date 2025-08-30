@@ -4,11 +4,13 @@ import axiosInstance from "@/service/api";
 
 interface RecipeStore {
   recipes: Recipe[];
+  recipesRecommend: Recipe[];
   isLoading: boolean;
   error: string | null;
   categories: string[];
   fetchRecipes: () => Promise<void>;
   fetchCategories: () => Promise<void>;
+  fetchRecommendRecipes: () => Promise<void>;
   searchRecipes: (filters: RecipeFilters) => Promise<void>;
   addRecipe: (recipeData: Omit<Recipe, "id">) => Promise<void>;
   deleteRecipe: (recipeId: string) => Promise<void>;
@@ -23,6 +25,7 @@ export interface RecipeFilters {
 
 export const useRecipeStore = create<RecipeStore>((set, get) => ({
   recipes: [],
+  recipesRecommend: [],
   categories: [],
   isLoading: false,
   error: null,
@@ -35,6 +38,15 @@ export const useRecipeStore = create<RecipeStore>((set, get) => ({
       console.log("🚀 ~ response.data?.data :", response.data?.data);
     } catch (err) {
       console.error("Error fetching recipes:", err);
+      set({ isLoading: false, error: "Failed to fetch recipes." });
+    }
+  },
+  fetchRecommendRecipes: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axiosInstance.get(`/recipes/recommend`);
+      set({ recipesRecommend: response.data?.data as Recipe[], isLoading: false });
+    } catch (err) {
       set({ isLoading: false, error: "Failed to fetch recipes." });
     }
   },
