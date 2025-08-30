@@ -12,6 +12,7 @@ const Profile = lazy(() => import("./pages/Profile/Profile"));
 const Products = lazy(() => import("./pages/Products"));
 const Recipes = lazy(() => import("./pages/Recipes/Recipes"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const RecipeDetails = lazy(() => import("./pages/RecipeDetails/RecipeDetails"));
 
 import PrivateRoute from "./components/PrivateRoutes";
 import PublicRoute from "./components/PublicRoutes";
@@ -49,6 +50,7 @@ const App = () => {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/recipes" element={<Recipes />} />
+                <Route path="/recipes/:id" element={<RecipeDetails />} />
               </Route>
 
               <Route

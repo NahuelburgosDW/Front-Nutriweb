@@ -19,7 +19,7 @@ const debounce = <T extends any[]>(func: (...args: T) => void, delay: number) =>
 const RecipesPage = () => {
   const { userProducts } = useUserStore();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { recipes, categories, searchRecipes, isLoading } = useRecipeStore();
+  const { categories, searchRecipes, isLoading, recipesRecommend } = useRecipeStore();
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
 
@@ -63,7 +63,7 @@ const RecipesPage = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Recetas Disponibles</h1>
           <p className="text-gray-600">Recetas que puedes preparar con los productos de tu heladera</p>
         </div>
-        {/* {userProducts.length === 0 ? (
+        {userProducts.length === 0 ? (
           <Alert className="mb-8 flex items-center">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
@@ -71,25 +71,29 @@ const RecipesPage = () => {
               <Button asChild variant="link" className="px-2">
                 <a href="/products">Agregar productos</a>
               </Button>
-              para ver recetas disponibles.
+              para ver recetas recomendadas.
             </AlertDescription>
           </Alert>
         ) : (
-          <> */}
-        <RecipesHeader
-          searchTerm={searchTerm}
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onSearchChange={handleSearchChange}
-          onSearchQuickly={onSearchQuickly}
-        />
-        {isLoading ? (
-          <div className="text-center mb-4 text-gray-600">Cargando recetas...</div>
-        ) : (
-          <RecipesList recipes={recipes} searchTerm={searchTerm} getAvailableIngredients={getAvailableIngredients} />
+          <>
+            <RecipesHeader
+              searchTerm={searchTerm}
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onSearchChange={handleSearchChange}
+              onSearchQuickly={onSearchQuickly}
+            />
+            {isLoading ? (
+              <div className="text-center mb-4 text-gray-600">Cargando recetas...</div>
+            ) : (
+              <RecipesList
+                recipes={recipesRecommend}
+                searchTerm={searchTerm}
+                getAvailableIngredients={getAvailableIngredients}
+              />
+            )}
+          </>
         )}
-        {/*   </>
-        )} */}
       </main>
     </div>
   );

@@ -124,7 +124,7 @@ const Profile = () => {
                         step="0.1"
                         min={0}
                         placeholder={String(user?.userProfiles?.weight)}
-                        value={formData.weight}
+                        value={formData.weight || ""}
                         onChange={handleChange}
                         className="pl-10"
                       />
@@ -141,7 +141,7 @@ const Profile = () => {
                         type="number"
                         min={0}
                         placeholder={String(user?.userProfiles?.height)}
-                        value={formData.height}
+                        value={formData.height || ""}
                         onChange={handleChange}
                         className="pl-10"
                       />

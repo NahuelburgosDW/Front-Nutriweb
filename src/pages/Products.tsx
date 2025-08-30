@@ -1,31 +1,23 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ShoppingCart, Plus, X, Refrigerator } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/store/useProductStore";
 import { useUserStore } from "@/store/useUserStore";
 import { Product } from "@/types/user";
+import { Plus, Refrigerator, ShoppingCart, X } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Products = () => {
   const { userProducts, addProduct, deleteProduct } = useUserStore();
-  const { products, setProducts } = useProductStore();
-  const [user, setUser] = useState<any>(null);
+  const { products } = useProductStore();
   const [newProduct, setNewProduct] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
-
-
-  const saveProducts = (updatedProducts: string[]) => {
-    if (user) {
-      localStorage.setItem(`nutriweb_products_${user.id}`, JSON.stringify(updatedProducts));
-    }
-  };
 
   const handleAddProduct = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +33,7 @@ const Products = () => {
 
     const trimmedProduct = newProduct.trim().toLowerCase();
 
-    if (products.some((p) => p.name?.toLowerCase() === trimmedProduct)) {
+    if (userProducts.some((p) => p.name?.toLowerCase() === trimmedProduct)) {
       toast({
         title: "Producto duplicado",
         description: "Este producto ya está en tu lista.",
@@ -124,7 +116,7 @@ const Products = () => {
                 <div className="flex flex-wrap gap-2">
                   {products
                     .filter(
-                      (p) => !userProducts.some((existing) => existing.name?.toLowerCase() === p?.name?.toLowerCase())
+                      (p) => !userProducts.some((existing) => existing?.name?.toLowerCase() === p?.name?.toLowerCase())
                     )
                     .slice(0, 8)
                     .map((product) => (

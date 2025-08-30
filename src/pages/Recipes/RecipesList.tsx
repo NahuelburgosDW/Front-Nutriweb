@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Clock, ChefHat, Utensils, Flame } from "lucide-react";
 import { difficultyNumber, Recipe, RecipeDifficulty } from "@/types/recipes";
+import Image from "@/components/Image";
+import { useNavigate } from "react-router-dom";
 
 interface RecipesListProps {
   recipes: Recipe[];
@@ -12,6 +14,7 @@ interface RecipesListProps {
 }
 
 const RecipesList: React.FC<RecipesListProps> = ({ recipes, searchTerm, getAvailableIngredients }) => {
+  const navigate = useNavigate();
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case RecipeDifficulty.FACIL:
@@ -55,12 +58,19 @@ const RecipesList: React.FC<RecipesListProps> = ({ recipes, searchTerm, getAvail
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {recipes.map((recipe) => (
-          <Card key={recipe.id} className="hover:shadow-lg transition-shadow">
-            <img
-              src={recipe.imageUrl || "https://placehold.co/600x400/E5E7EB/6B7280?text=Receta"}
-              alt={recipe.name}
-              className="w-full h-48 object-cover rounded-t-lg"
-            />
+          <Card
+            key={recipe.id}
+            className="hover:shadow-lg transition-shadow"
+            onClick={() => navigate(`/recipes/${recipe.id}`)}
+          >
+            <div className="relative w-full h-48">
+              {recipe?.isRecommend && (
+                <div className="absolute top-0 left-0 z-10 p-2">
+                  <label className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">Recomendada</label>
+                </div>
+              )}
+              <Image src={recipe.imageUrl} alt={recipe.name} className="object-cover rounded-t-lg w-full h-full" />
+            </div>
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -83,8 +93,8 @@ const RecipesList: React.FC<RecipesListProps> = ({ recipes, searchTerm, getAvail
                 <p> {recipe.calories} kcal</p>
               </div>
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="mb-4">
+            {/*   <CardContent className="pt-0"> */}
+            {/*             <div className="mb-4">
                 <h4 className="font-medium text-sm mb-2">Ingredientes necesarios:</h4>
                 <div className="flex flex-wrap gap-1">
                   {recipe?.ingredients?.length > 0 ? (
@@ -106,11 +116,11 @@ const RecipesList: React.FC<RecipesListProps> = ({ recipes, searchTerm, getAvail
                     <h2>No hay ingredientes</h2>
                   )}
                 </div>
-              </div>
-              {/*         <div>
+              </div> */}
+            {/*         <div>
                 <p>{recipe.foodType}</p>
               </div> */}
-              {/*  <div>
+            {/*  <div>
                 <h4 className="font-medium text-sm mb-2">Instrucciones:</h4>
                 <ol className="text-sm text-gray-600 space-y-1">
                   {recipe.steps.length === 0 ? (
@@ -125,7 +135,7 @@ const RecipesList: React.FC<RecipesListProps> = ({ recipes, searchTerm, getAvail
                   )}
                 </ol>
               </div> */}
-            </CardContent>
+            {/*             </CardContent> */}
           </Card>
         ))}
       </div>
