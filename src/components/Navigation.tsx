@@ -63,7 +63,7 @@ const Navigation = () => {
       </div>
 
       {/* Menú desplegable para móviles */}
-      {isMenuOpen && (
+      {isMenuOpen && user && (
         <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-lg border-t z-10">
           <div className="flex flex-col p-4 space-y-2">
             {user && (
