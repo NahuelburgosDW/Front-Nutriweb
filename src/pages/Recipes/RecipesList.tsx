@@ -57,8 +57,8 @@ const RecipesList: React.FC<RecipesListProps> = ({ recipes, searchTerm, getAvail
         </Badge>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {recipes.map((recipe) => (
-          <Card
+        {recipes.map((recipe) => {
+          return <Card
             key={recipe.id}
             className="hover:shadow-lg transition-shadow"
             onClick={() => navigate(`/recipes/${recipe.id}`)}
@@ -136,8 +136,8 @@ const RecipesList: React.FC<RecipesListProps> = ({ recipes, searchTerm, getAvail
                 </ol>
               </div> */}
             {/*             </CardContent> */}
-          </Card>
-        ))}
+          </Card>;
+        })}
       </div>
     </>
   );

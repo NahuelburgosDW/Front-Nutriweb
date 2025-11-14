@@ -18,14 +18,14 @@ const PrivateRoute: React.FC = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      if (products.length === 0 && !isProductsLoading) {
+      if (products?.length === 0 && !isProductsLoading) {
         fetchProducts();
       }
-      if (recipes.length === 0 && !isRecipesLoading) {
+      if (recipes?.length === 0 && !isRecipesLoading) {
         /*      fetchRecipes(); */
         fetchRecommendRecipes();
       }
-      if (categories.length === 0 && !isRecipesLoading) {
+      if (categories?.length === 0 && !isRecipesLoading) {
         fetchCategories();
       }
     }
