@@ -50,7 +50,7 @@ const Products = () => {
     });
   };
 
-  const handleRemoveProduct = (productToRemove:Product) => {
+  const handleRemoveProduct = (productToRemove: Product) => {
     deleteProduct(productToRemove.id);
 
     toast({
@@ -89,7 +89,6 @@ const Products = () => {
           <Card>
             <CardHeader>
               <div className="flex items-center">
-                <Plus className="h-6 w-6 text-green-600 mr-2" />
                 <CardTitle>Agregar Producto</CardTitle>
               </div>
               <CardDescription>Añade productos que tienes en tu heladera</CardDescription>
@@ -114,7 +113,8 @@ const Products = () => {
               <div className="mt-6">
                 <Label className="text-sm font-medium mb-3 block">Productos comunes:</Label>
                 <div className="flex flex-wrap gap-2">
-                  {products?.filter(
+                  {products
+                    ?.filter(
                       (p) => !userProducts?.some((existing) => existing?.name?.toLowerCase() === p?.name?.toLowerCase())
                     )
                     .slice(0, 8)
