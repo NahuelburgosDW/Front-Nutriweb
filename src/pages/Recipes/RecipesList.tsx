@@ -58,7 +58,7 @@ const RecipesList: React.FC<RecipesListProps> = ({ recipes, searchTerm, getAvail
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {recipes.map((recipe) => (
-          <Link to={`/recipes/${recipe.id}`} onMouseEnter={handlePrefetch}>
+          <Link to={`/recipes/${recipe.id}`}>
             <Card
               key={recipe.id}
               className="hover:shadow-lg transition-shadow"
