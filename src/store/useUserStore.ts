@@ -13,6 +13,7 @@ interface UserStore {
   updateUser: (data: Partial<User>) => Promise<void>;
   deleteProduct: (productId: string) => Promise<void>;
   fetchUser: () => Promise<void>;
+  setUserProducts: (products: Product[]) => void;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -29,6 +30,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
     } catch (error) {
       console.error("Error updating user:", error);
     }
+  },
+  setUserProducts: (products: Product[]) => {
+    set({ userProducts: products });
   },
   addProduct: async (product: Product) => {
     try {

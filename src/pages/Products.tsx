@@ -33,7 +33,7 @@ const Products = () => {
 
     const trimmedProduct = newProduct.trim().toLowerCase();
 
-    if (userProducts.some((p) => p.name?.toLowerCase() === trimmedProduct)) {
+    if (userProducts?.some((p) => p.name?.toLowerCase() === trimmedProduct)) {
       toast({
         title: "Producto duplicado",
         description: "Este producto ya está en tu lista.",
@@ -50,17 +50,17 @@ const Products = () => {
     });
   };
 
-  const handleRemoveProduct = (productToRemove: string) => {
-    deleteProduct(productToRemove);
+  const handleRemoveProduct = (productToRemove:Product) => {
+    deleteProduct(productToRemove.id);
 
     toast({
       title: "Producto eliminado",
-      description: `${productToRemove} se ha removido de tu heladera.`,
+      description: `${productToRemove.name} se ha removido de tu heladera.`,
     });
   };
 
   const handleQuickAdd = (product: Product) => {
-    if (userProducts.some((p) => p.id?.toLowerCase() === product.name?.toLowerCase())) {
+    if (userProducts?.some((p) => p.id?.toLowerCase() === product.name?.toLowerCase())) {
       toast({
         title: "Producto duplicado",
         description: "Este producto ya está en tu lista.",
@@ -114,9 +114,8 @@ const Products = () => {
               <div className="mt-6">
                 <Label className="text-sm font-medium mb-3 block">Productos comunes:</Label>
                 <div className="flex flex-wrap gap-2">
-                  {products
-                    .filter(
-                      (p) => !userProducts.some((existing) => existing?.name?.toLowerCase() === p?.name?.toLowerCase())
+                  {products?.filter(
+                      (p) => !userProducts?.some((existing) => existing?.name?.toLowerCase() === p?.name?.toLowerCase())
                     )
                     .slice(0, 8)
                     .map((product) => (
@@ -142,24 +141,24 @@ const Products = () => {
                 <CardTitle>Productos Disponibles</CardTitle>
               </div>
               <CardDescription>
-                {userProducts.length} producto{userProducts.length !== 1 ? "s" : ""} en tu heladera
+                {userProducts?.length} producto{userProducts?.length !== 1 ? "s" : ""} en tu heladera
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {userProducts.length === 0 ? (
+              {userProducts?.length === 0 ? (
                 <Alert>
                   <ShoppingCart className="h-4 w-4" />
                   <AlertDescription>No tienes productos registrados. ¡Comienza agregando algunos!</AlertDescription>
                 </Alert>
               ) : (
                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {userProducts.map((product, index) => (
+                  {userProducts?.map((product, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <span className="font-medium text-gray-900">{product.name}</span>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleRemoveProduct(product.id)}
+                        onClick={() => handleRemoveProduct(product)}
                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         <X className="h-4 w-4" />
