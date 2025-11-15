@@ -71,3 +71,18 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+Pendiente
+X = Ready
+
+🥕 Gestión de Inventario y Recetas
+[ ] Agregar cantidades de productos: Permitir registrar la cantidad exacta de cada ingrediente o producto en el inventario.
+
+[ ] Filtro de Recetas por Ingredientes Disponibles: Implementar un filtro en la vista de recetas para que solo se muestren aquellas que se pueden realizar con los ingredientes que el usuario tiene actualmente.
+
+[ ] Indicadores Visuales de Disponibilidad (Colores): Usar códigos de color en los ingredientes (tanto en el inventario como en las recetas) para indicar si el usuario los posee.
+
+🖥️ Interfaz y Experiencia de Usuario (UI/UX)
+[ ] Mejorar Dashboard (Panel de Control): Revisar y optimizar el diseño y la información presentada en el dashboard para ofrecer una mejor visión general.
+
+[X] Eliminar Icono "+" Redundante: Quitar el icono o botón de agregar en la sección de adición de productos o ingredientes para simplificar el flujo de trabajo.
