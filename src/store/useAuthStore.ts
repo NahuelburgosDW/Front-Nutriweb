@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axiosInstance from "@/service/api";
 import { User } from "@/types/user";
-import { useUserStore } from "./useUserStore"
+import { useUserStore } from "./useUserStore";
 interface AuthState {
   isLoggedIn: boolean;
   isLoading: boolean;
@@ -24,8 +24,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
     try {
       const response = await axiosInstance.get("/auth/status");
-      if (response.data?.user?.products) {
-        useUserStore.getState().setUserProducts(response.data?.user?.products ||[]);
+      if (response.data?.user?.userProducts) {
+        useUserStore.getState().setUserProducts(response.data?.user?.userProducts || []);
       }
       set({
         isLoggedIn: true,

@@ -1,19 +1,19 @@
 import { create } from "zustand";
-import { Product, User } from "@/types/user";
+import { Product, User, UserProducts } from "@/types/user";
 import axiosInstance from "@/service/api";
 import { useAuthStore } from "./useAuthStore";
 
 interface UserStore {
   user: User | null;
-  userProducts: Product[];
+  userProducts: UserProducts[];
   isLoading: boolean;
   error: string | null;
   setUser: (user: User) => void;
-  addProduct: (product: Product) => Promise<void>;
+  addProduct: (product: UserProducts) => Promise<void>;
   updateUser: (data: Partial<User>) => Promise<void>;
   deleteProduct: (productId: string) => Promise<void>;
   fetchUser: () => Promise<void>;
-  setUserProducts: (products: Product[]) => void;
+  setUserProducts: (products: UserProducts[]) => void;
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -31,20 +31,25 @@ export const useUserStore = create<UserStore>((set, get) => ({
       console.error("Error updating user:", error);
     }
   },
-  setUserProducts: (products: Product[]) => {
+  setUserProducts: (products: UserProducts[]) => {
     set({ userProducts: products });
   },
-  addProduct: async (product: Product) => {
+  addProduct: async (data: UserProducts) => {
+    const { product } = data;
     try {
       const userState = useAuthStore.getState().user;
       if (!userState || !userState.id) {
         throw new Error("User ID is not available.");
       }
 
-      const url = `/users/${userState?.id}/products/${product?.id}`;
+      const url = `/users/${userState?.id}/products/${product?.id}`; // Nota: La API solo necesita el ID del producto, no la cantidad.
 
-      await axiosInstance.post(url);
-      set((state) => ({ userProducts: [...state.userProducts, product] }));
+      // 1. Ejecutar el POST a la API
+      await axiosInstance.post(url, { quantity: data.quantity });
+
+      set((state) => ({
+        userProducts: [...state.userProducts, data],
+      }));
     } catch (err) {
       console.error("Failed to add product:", err);
       set({ error: "Failed to add product." });
@@ -58,7 +63,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
       }
       await axiosInstance.delete(`/users/${userState.id}/products/${productId}`);
       set((state) => ({
-        userProducts: state.userProducts.filter((product) => product.id !== productId),
+        userProducts: state.userProducts.filter((product) => product.product.id !== productId),
       }));
     } catch (err) {
       console.error("Failed to delete product:", err);

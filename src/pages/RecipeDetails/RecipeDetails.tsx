@@ -1,39 +1,61 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import Image from "@/components/Image";
-import { Star, StarHalf, Text } from "lucide-react";
-import StarRating from "@/components/StartRating";
+import { AlertTriangle, CheckCircle, Star, StarHalf, Text, XCircle } from "lucide-react";
+import { useRecipeStore } from "@/store/useRecipeStore";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useUserStore } from "@/store/useUserStore";
 
-// Registrar los elementos de Chart.js
 ChartJS.register(ArcElement, Tooltip, Legend);
-const recipe = {
-  id: "1",
-  name: "Tarta de Manzana",
-  ingredients: [
-    { name: "Manzanas", quantity: "4 unidades" },
-    { name: "Harina", quantity: "250g" },
-  ],
-  instructions: "Precalentar el horno a 180°C. Mezclar la harina con...",
-  cookingTime: 60,
-  difficulty: "Intermedio",
-  category: "Postre",
-  steps: ["Prepara la masa.", "Corta las manzanas.", "Hornea durante 40 minutos."],
-  imageUrl: "https://cdn0.recetasgratis.net/es/posts/4/9/1/ensalada_de_quinoa_con_aguacate_y_atun_59194_orig.jpg",
-  foodType: "Vegetariano",
-  calories: 350,
-};
-// Componente para la pantalla de detalle de la receta
+type StockStatus = "FULL" | "INSUFFICIENT" | "MISSING";
+interface StockCheckResult {
+  status: StockStatus;
+  missingAmount: number;
+  availableAmount: number;
+}
+const MissingAmountTooltip = ({ name, required, available, unit, missing, onClose }) => (
+  <div className="absolute z-50 p-4 bg-white border border-red-300 rounded-lg shadow-xl right-0 top-full mt-2 w-64">
+    <h4 className="font-bold text-red-600">¡Stock Insuficiente!</h4>
+    <p className="text-sm mt-1">
+      Para preparar <b>{name}</b> necesitas <b>{required}</b> <b>{unit}</b>, pero solo tienes{" "}
+      <b>
+        {available} {unit}
+      </b>{" "}
+      en tu inventario.
+    </p>
+    <p className="font-semibold text-base mt-2">
+      Faltan:{" "}
+      <span className="text-red-600">
+        {missing.toFixed(2)} {unit}
+      </span>
+    </p>
+    <button onClick={onClose} className="mt-3 text-xs text-blue-500 hover:text-blue-700">
+      Cerrar
+    </button>
+  </div>
+);
+
 const RecipeDetail = () => {
+  const { fetchRecipe, recipe } = useRecipeStore();
+  const { userProducts } = useUserStore();
+  const [showTooltipId, setShowTooltipId] = useState<string | null>(null);
+  const params = useParams();
+  const recipeId = params.id;
+
+  useEffect(() => {
+    fetchRecipe(recipeId);
+  }, [fetchRecipe]);
+
   if (!recipe) {
     return <div>No se encontró la receta.</div>;
   }
 
-  // Datos para el gráfico de calorías
   const pieChartData = {
     labels: ["Calorías", "Resto"],
     datasets: [
       {
-        data: [recipe.calories, 2000 - recipe.calories], // Asume un valor diario de 2000
+        data: [recipe.calories, 2000 - recipe.calories],
         backgroundColor: ["#ef4444", "#f3f4f6"],
         borderColor: ["#ef4444", "#f3f4f6"],
         borderWidth: 1,
@@ -47,6 +69,91 @@ const RecipeDetail = () => {
         display: false,
       },
     },
+  };
+  const checkProductStock = (productId: string, requiredQuantity: string): StockCheckResult => {
+    const userProductItem = userProducts.find((item) => item.product.id === productId);
+
+    const reqQuantity = parseFloat(requiredQuantity);
+
+    if (!userProductItem) {
+      return { status: "MISSING", missingAmount: reqQuantity, availableAmount: 0 };
+    }
+
+    const userHasQuantity = userProductItem.quantity;
+
+    if (userHasQuantity >= reqQuantity) {
+      return { status: "FULL", missingAmount: 0, availableAmount: userHasQuantity };
+    } else {
+      const missing = reqQuantity - userHasQuantity;
+      return { status: "INSUFFICIENT", missingAmount: missing, availableAmount: userHasQuantity };
+    }
+  };
+  const IngredientItem = ({ ingredient }) => {
+    const stockCheck = checkProductStock(ingredient.product.id, ingredient.quantity);
+
+    const { status, missingAmount, availableAmount } = stockCheck;
+    const isTooltipOpen = showTooltipId === ingredient.product.id;
+
+    let containerClasses, icon, textClasses, quantityClasses;
+
+    switch (status) {
+      case "FULL":
+        containerClasses = "bg-green-50/70 border border-green-200 shadow-sm";
+        icon = <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />;
+        textClasses = "text-green-800 font-medium text-base";
+        quantityClasses = "text-green-700 bg-green-100";
+        break;
+
+      case "INSUFFICIENT":
+        containerClasses = "bg-yellow-50/70 border border-yellow-200 shadow-sm";
+        icon = (
+          <AlertTriangle
+            className="h-5 w-5 text-yellow-600 cursor-pointer flex-shrink-0"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowTooltipId(isTooltipOpen ? null : ingredient.product.id);
+            }}
+          />
+        );
+        textClasses = "text-yellow-800 font-medium text-base";
+        quantityClasses = "text-yellow-700 bg-yellow-100";
+        break;
+
+      case "MISSING":
+      default:
+        containerClasses = "bg-red-50/70 border border-red-200 shadow-sm opacity-85";
+        icon = <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />;
+        textClasses = "text-red-800 font-medium text-base line-through opacity-80";
+        quantityClasses = "text-red-700 bg-red-100";
+        break;
+    }
+
+    return (
+      <li className="mb-1">
+        <div className={`relative flex items-center justify-between p-3 my-2 rounded-lg ${containerClasses}`}>
+          <div className="flex items-center space-x-3">
+            {icon}
+            <span className={textClasses}>{ingredient.product.name}</span>
+          </div>
+          <div className="flex items-center relative">
+            <span className={`text-sm font-semibold px-3 py-1 rounded-full ${quantityClasses}`}>
+              {ingredient.quantity} {ingredient.product.defaultUnit}
+            </span>
+
+            {status === "INSUFFICIENT" && isTooltipOpen && (
+              <MissingAmountTooltip
+                name={ingredient.product.name}
+                required={parseFloat(ingredient.quantity)}
+                available={availableAmount}
+                unit={ingredient.product.defaultUnit}
+                missing={missingAmount}
+                onClose={() => setShowTooltipId(null)}
+              />
+            )}
+          </div>
+        </div>
+      </li>
+    );
   };
 
   return (
@@ -115,24 +222,20 @@ const RecipeDetail = () => {
         {/* Ingredientes */}
         <div className="bg-gray-50 p-4 rounded-lg shadow-inner">
           <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Ingredientes</h2>
-          <ul className="list-disc pl-6 text-gray-700">
-            {recipe.ingredients.map((ingredient, index) => (
-              <li key={index} className="mb-1">
-                {ingredient.quantity} {ingredient.name}
-              </li>
+          <ul className="list-none pl-0 text-gray-700">
+            {recipe.recipeProducts?.map((ingredient, index) => (
+              <IngredientItem key={index} ingredient={ingredient} />
             ))}
           </ul>
         </div>
       </div>
 
-      {/* Instrucciones y pasos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-gray-50 p-4 rounded-lg shadow-inner">
           <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Instrucciones</h2>
           <p className="text-gray-700 leading-relaxed text-justify">{recipe.instructions}</p>
         </div>
 
-        {/* Pasos de la receta */}
         <div className="bg-gray-50 p-4 rounded-lg shadow-inner">
           <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Pasos</h2>
           <ol className="list-decimal pl-6 text-gray-700">
