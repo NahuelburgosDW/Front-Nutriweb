@@ -3,7 +3,6 @@ import style from "./styles.module.css";
 
 const Image = ({ src, alt, width = "", height = "", className, ...props }) => {
   const [loading, setLoading] = useState(true);
-  console.log("🚀 ~ Image ~ loading:", loading);
 
   useEffect(() => {
     setLoading(true);
@@ -11,7 +10,6 @@ const Image = ({ src, alt, width = "", height = "", className, ...props }) => {
 
   const handleOnLoad = () => {
     setLoading(false);
-    console.log("🚀 ~ handleOnLoad ~ false:", false);
   };
 
   return (

@@ -19,7 +19,7 @@ const debounce = <T extends any[]>(func: (...args: T) => void, delay: number) =>
 const RecipesPage = () => {
   const { userProducts } = useUserStore();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { categories, searchRecipes, isLoading, recipesRecommend,recipes } = useRecipeStore();
+  const { categories, searchRecipes, isLoading, recipesRecommend, recipes } = useRecipeStore();
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
 
@@ -56,9 +56,7 @@ const RecipesPage = () => {
     searchRecipes(userFilters);
   };
 
-  const isRecipeFilter =
-   (searchTerm && String(searchTerm).trim().length > 0) ||
-    selectedCategory !== "Todas";
+  const isRecipeFilter = (searchTerm && String(searchTerm).trim().length > 0) || selectedCategory !== "Todas";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
@@ -91,7 +89,7 @@ const RecipesPage = () => {
               <div className="text-center mb-4 text-gray-600">Cargando recetas...</div>
             ) : (
               <RecipesList
-                recipes={isRecipeFilter ? recipes:recipesRecommend}
+                recipes={isRecipeFilter ? recipes : recipesRecommend}
                 searchTerm={searchTerm}
                 getAvailableIngredients={getAvailableIngredients}
               />

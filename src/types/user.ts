@@ -3,7 +3,23 @@ import { ImcCategory } from "./imcCategory";
 export interface Product {
   id: string;
   name: string;
+  description: string;
+  defaultUnit: string;
+  tags: string;
+}
+
+export interface UserProducts {
+  id: string;
+  name: string;
   brand?: string;
+  quantity?: number;
+  product: {
+    id: string;
+    name: string;
+    description: string;
+    defaultUnit: string;
+    tags: string;
+  };
 }
 export interface User {
   id?: string;

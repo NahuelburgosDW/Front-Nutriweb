@@ -17,6 +17,7 @@ const RecipesHeader: React.FC<RecipesHeaderProps> = ({
   onSearchChange,
   onSearchQuickly,
 }) => {
+  
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-8">
       <div className="flex-1">

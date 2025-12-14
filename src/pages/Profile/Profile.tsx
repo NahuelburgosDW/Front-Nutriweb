@@ -56,7 +56,6 @@ const Profile = () => {
         description: "Tus datos han sido guardados correctamente.",
       });
     } catch (error) {
-      console.log("🚀 ~ handleSubmit ~ error:", error);
       toast({
         title: "Error",
         description: "No se pudo guardar el perfil. Intenta nuevamente.",
@@ -169,7 +168,7 @@ const Profile = () => {
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-3xl font-bold text-gray-900">{user?.userProfiles.imc}</p>
+                  <p className="text-3xl font-bold text-gray-900">{user?.userProfiles?.imc}</p>
                   <p className="text-sm text-gray-500">kg/m²</p>
                 </div>
                 <Badge
